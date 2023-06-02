@@ -30,18 +30,23 @@ scoreBlock = document.querySelector(".game-score .score-count"); // Отрима
 drawScore(); // Ініціалізація відображення рахунку
 
 function gameLoop() {
-	requestAnimationFrame(gameLoop); // Функція викликає себе рекурсивно для оновлення гри на кожен кадр
+  requestAnimationFrame(gameLoop); // Функція викликає себе рекурсивно для оновлення гри на кожен кадр
 
-	if (++config.step < config.maxStep) {
-		return; // Перевірка, чи досягнута максимальна кількість кроків
-	}
-	config.step = 0; // Скидання лічильника кроків
+  if (++config.step < config.maxStep) {
+    return; // Перевірка, чи досягнута максимальна кількість кроків
+  }
+  config.step = 0; // Скидання лічильника кроків
 
-	context.clearRect(0, 0, canvas.width, canvas.height); // Очищення <canvas>
+  context.clearRect(0, 0, canvas.width, canvas.height); // Очищення <canvas>
 
-	drawBerry(); // Малювання ягоди
-	drawSnake(); // Малювання змійки
+  drawBerry(); // Малювання ягоди
+  drawSnake(); // Малювання змійки
+
+  if (isGameOver()) {
+    refreshGame(); // Перезапуск гри при проигрыше
+  }
 }
+
 requestAnimationFrame(gameLoop); // Початок гри (виклик першого кадру)
 
 function drawSnake() {
@@ -93,18 +98,20 @@ function collisionBorder() {
 }
 
 function refreshGame() {
-	score = 0; // Скидання рахунку
-	drawScore(); // Оновлення відображення рахунку
+  alert("Игра окончена. Набрано очков: " + score); // Выводит сообщение о проигрыше и набранных очках
+  score = 0; // Скидання рахунку
+  drawScore(); // Оновлення відображення рахунку
 
-	snake.x = 160; // Початкова позиція змійки
-	snake.y = 160;
-	snake.tails = []; // Очищення хвоста змійки
-	snake.maxTails = 3; // Початкова довжина хвоста
-	snake.dx = config.sizeCell; // Початкова швидкість змійки по горизонталі
-	snake.dy = 0; // Початкова швидкість змійки по вертикалі
+  snake.x = 160; // Початкова позиція змійки
+  snake.y = 160;
+  snake.tails = []; // Очищення хвоста змійки
+  snake.maxTails = 3; // Початкова довжина хвоста
+  snake.dx = config.sizeCell; // Початкова швидкість змійки по горизонталі
+  snake.dy = 0; // Початкова швидкість змійки по вертикалі
 
-	randomPositionBerry(); // Випадкове розміщення ягоди
+  randomPositionBerry(); // Випадкове розміщення ягоди
 }
+
 
 function drawBerry() {
 	context.beginPath();
@@ -152,3 +159,12 @@ document.addEventListener("keydown", function (e) {
 		snake.dy = 0;
 	}
 });
+
+function isGameOver() {
+  for (let i = 1; i < snake.tails.length; i++) {
+    if (snake.x === snake.tails[i].x && snake.y === snake.tails[i].y) {
+      return true; // Если змейка столкнулась с собственным хвостом, возвращаем true
+    }
+  }
+  return false;
+}
