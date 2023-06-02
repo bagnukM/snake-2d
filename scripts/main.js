@@ -1,6 +1,8 @@
-// Оголошення змінних та ініціалізація налаштувань гри
+// Оголошення зміних та ініціалізаця налаштувань гри
 let scoreBlock; // DOM-елемент для відображення рахунку
 let score = 0; // Поточний рахунок
+let isPaused = false; // Прапор для відстеження стану паузи
+
 
 const config = {
 	step: 0, // Лічильник для контролю швидкості гри
@@ -18,9 +20,9 @@ const snake = {
 	maxTails: 3 // Максимальна довжина хвоста змійки
 }
 
-let berry = {
-	x: 0, // Початкова позиція ягоди по горизонталі
-	y: 0 // Початкова позиція ягоди по вертикалі
+let berry = {   // Початкова позиція ягоди 
+	x: 0,
+	y: 0 
 } 
 
 
@@ -44,6 +46,10 @@ function gameLoop() {
 
   if (isGameOver()) {
     refreshGame(); // Перезапуск гри при проигрыше
+	}
+	
+	if (isPaused) {
+    return; // Если игра приостановлена, просто выходим из функции
   }
 }
 
@@ -100,7 +106,7 @@ function collisionBorder() {
 function refreshGame() {
   alert("Игра окончена. Набрано очков: " + score); // Выводит сообщение о проигрыше и набранных очках
   score = 0; // Скидання рахунку
-  drawScore(); // Оновлення відображення рахунку
+  drawScore(); // Оновлення відображеня рахунку
 
   snake.x = 160; // Початкова позиція змійки
   snake.y = 160;
@@ -157,7 +163,13 @@ document.addEventListener("keydown", function (e) {
 	} else if (e.code == "KeyD") {
 		snake.dx = config.sizeCell; // Зміна швидкості змійки при натисканні клавіші "D"
 		snake.dy = 0;
-	}
+	} else if (e.code === "Space") {
+    isPaused = !isPaused; // Инвертируем значение флага isPaused при нажатии клавиши Space
+    if (isPaused) {
+      // Если игра приостановлена, выводим сообщение
+      alert("Игра приостановлена");
+    }
+  }
 });
 
 function isGameOver() {
@@ -168,3 +180,4 @@ function isGameOver() {
   }
   return false;
 }
+
